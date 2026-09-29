@@ -3,26 +3,21 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
-
 jobs:
   build-windows:
     runs-on: windows-latest
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
-
       - name: Set Pub mirror
         run: |
           echo "PUB_HOSTED_URL=https://pub.flutter-io.cn" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn" | Out-File -FilePath $env:GITHUB_ENV -Append
-
       - name: Setup Flutter SDK
-        # 替换为Flutter官方维护的setup工具，彻底解决Windows shell脚本jq解析报错
-        uses: flutter/actions/setup-flutter@v1
+        uses: subosito/flutter-action@v2.10.0
         with:
           flutter-version: '3.24.0'
           channel: stable
-
       - name: Cache Flutter pub dependencies
         uses: actions/cache@v4
         with:
@@ -30,13 +25,10 @@ jobs:
             ~/.pub-cache
             **/build
           key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.yaml') }}
-
       - name: Flutter pub get
         run: flutter pub get
-
       - name: Build Windows release
         run: flutter build windows --release
-
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
