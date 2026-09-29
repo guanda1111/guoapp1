@@ -1,36 +1,53 @@
-name: Build Flutter Windows
+name: Build Windows
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
+
 jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-      - name: Checkout source
+      - name: Checkout 代码
         uses: actions/checkout@v4
-      - name: Set Pub mirror
+
+      - name: 设置国内Pub镜像
         run: |
           echo "PUB_HOSTED_URL=https://pub.flutter-io.cn" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn" | Out-File -FilePath $env:GITHUB_ENV -Append
-      - name: Setup Flutter SDK
+
+      - name: 安装 Flutter 3.44.0
         uses: subosito/flutter-action@v2.10.0
         with:
           flutter-version: '3.44.0'
           channel: stable
-      - name: Cache Flutter pub dependencies
+
+      - name: 缓存pub依赖
         uses: actions/cache@v4
         with:
           path: |
             ~/.pub-cache
             **/build
           key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.yaml') }}
-      - name: Flutter pub get
+
+      - name: flutter pub get
         run: flutter pub get
-      - name: Build Windows release
-        run: flutter build windows --release
-      - name: Upload artifact
+
+      - name: 生成Windows工程，不编译
+        run: flutter build windows --release --no-build
+
+      - name: CMake编译（跳过INSTALL阶段）
+        run: |
+          cd build/windows/x64
+          cmake --build . --config Release
+
+      - name: 收集产物
+        run: |
+          mkdir -p build/windows-x64-release
+          cp -r build/windows/x64/Release/* build/windows-x64-release/
+
+      - name: 上传打包产物
         uses: actions/upload-artifact@v4
         with:
-          name: windows-release
-          path: build/windows/x64/release/
+          name: windows-release-duanju
+          path: build/windows-x64-release/
