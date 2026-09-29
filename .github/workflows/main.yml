@@ -33,18 +33,13 @@ jobs:
       - name: flutter pub get
         run: flutter pub get
 
-      - name: 生成Windows工程，不编译
-        run: flutter build windows --release --no-build
+      - name: 编译Windows Release，跳过INSTALL阶段（关键修复）
+        run: flutter build windows --release --no-install
 
-      - name: CMake编译（跳过INSTALL阶段）
-        run: |
-          cd build/windows/x64
-          cmake --build . --config Release
-
-      - name: 收集产物
+      - name: 收集Release产物
         run: |
           mkdir -p build/windows-x64-release
-          cp -r build/windows/x64/Release/* build/windows-x64-release/
+          Copy-Item -Recurse build/windows/x64/Release/* build/windows-x64-release/
 
       - name: 上传打包产物
         uses: actions/upload-artifact@v4
