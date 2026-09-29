@@ -17,7 +17,8 @@ jobs:
           echo "FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Setup Flutter SDK
-        uses: subosito/flutter-action@v2
+        # 替换为Flutter官方维护的setup工具，彻底解决Windows shell脚本jq解析报错
+        uses: flutter/actions/setup-flutter@v1
         with:
           flutter-version: '3.24.0'
           channel: stable
