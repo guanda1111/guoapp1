@@ -2,10 +2,8 @@ name: duanju_app
 description: 独立运行的多端短剧应用
 publish_to: none
 version: 0.2.67+74
-
 environment:
   sdk: '>=3.12.0 <4.0.0'
-
 dependencies:
   flutter:
     sdk: flutter
@@ -25,7 +23,6 @@ dependencies:
   crypto: ^3.0.7
   window_manager: ^0.5.1
   nsd: 5.0.1
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -33,14 +30,15 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   shared_preferences_platform_interface: ^2.4.2
-
 dependency_overrides:
   media_kit_libs_windows_video:
     path: packages/media_kit_libs_windows_video
 
+# config 移到顶层，和 flutter 平级
+config:
+  enable-swift-package-manager: false
+
 flutter:
-  config:
-    enable-swift-package-manager: false
   uses-material-design: true
   assets:
     - assets/video_enhancement/
